@@ -1,0 +1,17 @@
+{
+  "name": "a",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -t reactify -d index.js > index.min.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "reactify": "^1.1.1",
+    "web3": "^0.19.0",
+    "xhr2": "^0.1.4"
+  }
+}
