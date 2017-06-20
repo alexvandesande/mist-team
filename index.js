@@ -35,8 +35,8 @@ class Proposal extends React.Component {
     <h3> {proposal.date.toISOString().slice(0,10)}  </h3>
 
     Requested By: <strong>{proposal.requestedBy}</strong> <br/>
-    Send to: <a href={'https://etherscan.io/address/'+proposal.recipient}>{proposal.recipient}</a> <br/>
-    Documentation: {Number(proposal.documentation) == 0 ? <em> Not yet implemented </em> : <a href={'bzz://'+proposal.documentation}> bzz://{proposal.documentation} </a>}<br/>
+    Send to: <a href={'https://etherscan.io/address/'+proposal.recipient}>{proposal.recipient}</a> <br/><br/>
+    {Number(proposal.documentation) == 0 ? <em> No documentation provided </em> : <a href={'bzz://'+proposal.documentation} title={'download from bzz://'+proposal.documentation}> Download documentation from swarm </a>}<br/>
     <br/>
     {(approver > 0 && proposal.status == 'pending') ? this.state.showButtons ? <div className="center"> 
       <button onClick={() => ApproveProposal(proposal.proposalNumber, approver, true, this)} className='dapp-block-button approve'>Approve</button> 
