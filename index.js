@@ -31,10 +31,11 @@ class Proposal extends React.Component {
     const {proposal, approver} = this.props;
 
     return <div className="proposal">
-    <h3> {proposal.title} </h3>
+    <h1> {proposal.title} <strong>€{proposal.amount}</strong>  </h1>
+    <h3> {proposal.date.toISOString().slice(0,10)}  </h3>
 
-    Send to: <strong>{proposal.requestedBy}</strong> <br/>
-    amount: <strong>€{proposal.amount}</strong> <br/>
+    Requested By: <strong>{proposal.requestedBy}</strong> <br/>
+    Send to: <a href={'https://etherscan.io/address/'+proposal.recipient}>{proposal.recipient}</a> <br/>
     Documentation: {Number(proposal.documentation) == 0 ? <em> Not yet implemented </em> : <a href={'bzz://'+proposal.documentation}> bzz://{proposal.documentation} </a>}<br/>
     <br/>
     {(approver > 0 && proposal.status == 'pending') ? this.state.showButtons ? <div className="center"> 
@@ -109,13 +110,15 @@ class App extends React.Component {
       
     });
 
+    const teamNames = ['', 'A.V.', 'A.V. (approver)', 'J.W.', 'V.M.', 'E.F.'];
 
     mistTeam.numProposalsAsync().then((numProposals) => {
       const proposalRequests = _.range(0,numProposals)
         .map((p, i) => mistTeam.proposalsAsync(p).then(p => (console.log('p',p), {
           proposalNumber: i,
           title: p[4],
-          requestedBy: p[1].toFixed(),
+          requestedBy: teamNames[p[1].toFixed()],
+          date: new Date(p[3].toFixed() * 1000),
           recipient: p[0],
           documentation: p[5].replace('0x',''),
           amount: parseFloat(Math.round(p[2].toFixed()) / 100).toFixed(2) ,
