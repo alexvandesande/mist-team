@@ -1,6 +1,15 @@
 const Web3 = require("web3");
 // const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/sE0I5J1gO2jugs9LndHR"));
-const blockies = require("./libs/blockies.min.js");
+// const web3 = new Web3(Web3.currentProvider);
+
+// if(typeof web3 !== 'undefined') {
+//   web3 = new Web3(web3.currentProvider);
+// } else {
+//   let Web3 = require('web3');
+//   web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
+// }
+
+// const blockies = require("./libs/blockies.min.js");
 const mistTeamSpec = require("./mistteam.json");
 const priceSpec = require("./priceOracle.json");
 const mistTeam = web3.eth.contract(mistTeamSpec.abi).at(mistTeamSpec.address);
@@ -26,7 +35,7 @@ class Proposal extends React.Component {
 
     Send to: <strong>{proposal.requestedBy}</strong> <br/>
     amount: <strong>€{proposal.amount}</strong> <br/>
-    Documentation: <em> Not yet implemented </em> <br/>
+    Documentation: {Number(proposal.documentation) == 0 ? <em> Not yet implemented </em> : <a href={'bzz://'+proposal.documentation}> bzz://{proposal.documentation} </a>}<br/>
     <br/>
     {(approver > 0 && proposal.status == 'pending') ? this.state.showButtons ? <div className="center"> 
       <button onClick={() => ApproveProposal(proposal.proposalNumber, approver, true, this)} className='dapp-block-button approve'>Approve</button> 
@@ -63,7 +72,7 @@ class App extends React.Component {
       balance:0,
       displayBalance:0,
       proposals: [],
-      show: 'pending',
+      show: 'all',
       requester: '',
       approver: '',
       account:'',
@@ -79,7 +88,7 @@ class App extends React.Component {
   }
 
   updateData() {
-    console.log('updateData..');
+    console.log('updateData...', priceOracle);
     priceOracle.priceAsync().then((price) => {
         this.setState({price: Math.round(price.toFixed())/100});
         web3.eth.getBalance(mistTeamSpec.address, (err, res) => {
@@ -100,20 +109,33 @@ class App extends React.Component {
       
     });
 
+
     mistTeam.numProposalsAsync().then((numProposals) => {
       const proposalRequests = _.range(0,numProposals)
-        .map((p, i) => mistTeam.proposalsAsync(p).then(p => ({
+        .map((p, i) => mistTeam.proposalsAsync(p).then(p => (console.log('p',p), {
           proposalNumber: i,
-          title: p[2],
-          requestedBy: p[0],
-          amount: parseFloat(Math.round(p[1].toFixed()) / 100).toFixed(2) ,
-          status: p[4] ? 'executed' : p[7].toFixed() < 0 ? 'rejected' : 'pending'
+          title: p[4],
+          requestedBy: p[1].toFixed(),
+          recipient: p[0],
+          documentation: p[5].replace('0x',''),
+          amount: parseFloat(Math.round(p[2].toFixed()) / 100).toFixed(2) ,
+          status: p[6] ? 'executed' : p[9].toFixed() < p[8].toFixed() ? 'rejected' : 'pending'
         })));
       return Q.all(proposalRequests)
         .then(proposals => this.setState({proposals: proposals}))
     });
 
     const trace = a => (console.log(a), a);
+
+    // mistTeam.numProposalsAsync()
+    //   .then((numProposals) => {
+    //     console.log('numProposals', numProposals.toFixed(), mistTeam.proposalsAsync(0), mistTeam.proposalsAsync)
+    //     const proposalRequests = _.range(0,numProposals.toFixed())
+    //       .map((p, i) => mistTeam.proposalsAsync(p)
+    //         .then(p => {
+    //           console.log('p:', p, i);
+    //         }));
+    // });
 
     web3.eth.getAccountsAsync()
       .then(accs => { 
