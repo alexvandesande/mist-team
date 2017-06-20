@@ -73,7 +73,7 @@ class App extends React.Component {
       balance:0,
       displayBalance:0,
       proposals: [],
-      show: 'all',
+      show: 'pending',
       requester: '',
       approver: '',
       account:'',
@@ -215,7 +215,7 @@ class App extends React.Component {
           .filter(p => this.state.show === "all" || this.state.show === p.status)
           .reverse()
           .map( p => { return <Proposal proposal={p} approver={this.state.canApprove ? this.state.approver : null } /> })}
-        {this.state.proposals.filter(p => this.state.show === "all" || this.state.show === p.status).length == 0 ? <h3> No proposals to show </h3> : null }
+        {this.state.proposals.filter(p => this.state.show === "all" || this.state.show === p.status).length == 0 ? <h1> No proposals to show </h1> : null }
         </main>
 
     </div>
