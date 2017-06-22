@@ -1,25 +1,22 @@
 const Web3 = require("web3");
-// const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/sE0I5J1gO2jugs9LndHR"));
-// const web3 = new Web3(Web3.currentProvider);
+// TODO: FIgure out how this stuff works
+// let web3 = (typeof web3 !== 'undefined') ? new Web3(web3.currentProvider) : new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
 
-// if(typeof web3 !== 'undefined') {
-//   web3 = new Web3(web3.currentProvider);
-// } else {
-//   let Web3 = require('web3');
-//   web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
-// }
 
-// const blockies = require("./libs/blockies.min.js");
 const mistTeamSpec = require("./mistteam.json");
 const priceSpec = require("./priceOracle.json");
-const mistTeam = web3.eth.contract(mistTeamSpec.abi).at(mistTeamSpec.address);
-const priceOracle = web3.eth.contract(priceSpec.abi).at(priceSpec.address);
-const Q = require("bluebird");
-const _ = require("underscore");
+  // const blockies = require("./libs/blockies.min.js");
+if(typeof web3 !== 'undefined') {
 
-Q.promisifyAll(mistTeam);
-Q.promisifyAll(priceOracle);
-Q.promisifyAll(web3.eth);
+  const mistTeam = (typeof web3 !== 'undefined') ? web3.eth.contract(mistTeamSpec.abi).at(mistTeamSpec.address) : null;
+  const priceOracle = (typeof web3 !== 'undefined') ? web3.eth.contract(priceSpec.abi).at(priceSpec.address) : null;
+  const Q = require("bluebird");
+  const _ = require("underscore");
+
+  Q.promisifyAll(mistTeam);
+  Q.promisifyAll(priceOracle);
+  Q.promisifyAll(web3.eth);
+}
 
 class Proposal extends React.Component {
   constructor(props) {
@@ -64,7 +61,7 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      teamAddress: mistTeam.address,
+      teamAddress: mistTeamSpec.address,
       price: 0,
       lastPriceCheck: 0,
       owner: "N/A",
@@ -89,7 +86,7 @@ class App extends React.Component {
   }
 
   updateData() {
-    console.log('updateData...', priceOracle);
+    console.log('updateData...');
     priceOracle.priceAsync().then((price) => {
         this.setState({price: Math.round(price.toFixed())/100});
         web3.eth.getBalance(mistTeamSpec.address, (err, res) => {
@@ -110,11 +107,11 @@ class App extends React.Component {
       
     });
 
-    const teamNames = ['', 'A.V.', 'A.V. (approver)', 'J.W.', 'V.M.', 'E.F.'];
+    const teamNames = ['', 'A.V.', 'A.V. (approver)', 'V.M.', 'E.F.', 'J.W.', 'F.V.'];
 
     mistTeam.numProposalsAsync().then((numProposals) => {
       const proposalRequests = _.range(0,numProposals)
-        .map((p, i) => mistTeam.proposalsAsync(p).then(p => (console.log('p',p), {
+        .map((p, i) => mistTeam.proposalsAsync(p).then(p => ( {
           proposalNumber: i,
           title: p[4],
           requestedBy: teamNames[p[1].toFixed()],
@@ -146,7 +143,7 @@ class App extends React.Component {
         return accs; 
       })
       .then(accs => Q.all(accs.map(acc => mistTeam.memberIdAsync(acc))))
-      .then(accIds => Q.all(accIds.map(ids => mistTeam.membersAsync(ids))))
+      .then(accIds => Q.all(accIds.map(ids => mistTeam.membersAsync(ids.toFixed()))))
       .then(members => Q.all(_.each(members, member => {
         if(member[1]) { 
           this.setState({canApprove: true}); 
@@ -161,6 +158,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    if (typeof web3 === "undefined") return;
+
     this.updateData();
     const _this = this;
 
@@ -177,6 +176,7 @@ class App extends React.Component {
   }
   
   render() {
+    if (typeof web3 === "undefined") return <div className="dapp-container"><h1> <br/><br/>💾👴🏽<br/> Browser doesn't support web3 </h1></div>
     return  <div style={this.container} className="dapp-container">
     <header className='dapp-header'>
       <h1>Mist Team Budget </h1> 
@@ -201,7 +201,7 @@ class App extends React.Component {
           {this.state.canRequest ? this.state.canApprove ? <em> You can approve and request. </em> : <em> You can request. </em> : <em> You are not a member. </em> } 
           <h3 title={Math.floor(this.state.lastPriceCheck) + ' hours ago'}> Latest price: €{this.state.price}  
           {this.state.lastPriceCheck > 1 ? <button onClick={() => {
-            console.log(this.state.account,Math.round(web3.toWei(0.25 / this.state.price, 'ether')) , Math.floor(1000*0.25 / this.state.price) );
+            // console.log(this.state.account,Math.round(web3.toWei(0.25 / this.state.price, 'ether')) , Math.floor(1000*0.25 / this.state.price) );
             priceOracle.updateAsync({ 
               from: this.state.account, 
               value: Math.floor(web3.toWei(0.25 / this.state.price, 'ether')) 
