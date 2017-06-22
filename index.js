@@ -5,18 +5,15 @@ const Web3 = require("web3");
 
 const mistTeamSpec = require("./mistteam.json");
 const priceSpec = require("./priceOracle.json");
-  // const blockies = require("./libs/blockies.min.js");
-if(typeof web3 !== 'undefined') {
+// const blockies = require("./libs/blockies.min.js");
+const mistTeam = (typeof web3 !== 'undefined') ? web3.eth.contract(mistTeamSpec.abi).at(mistTeamSpec.address) : null;
+const priceOracle = (typeof web3 !== 'undefined') ? web3.eth.contract(priceSpec.abi).at(priceSpec.address) : null;
+const Q = require("bluebird");
+const _ = require("underscore");
 
-  const mistTeam = (typeof web3 !== 'undefined') ? web3.eth.contract(mistTeamSpec.abi).at(mistTeamSpec.address) : null;
-  const priceOracle = (typeof web3 !== 'undefined') ? web3.eth.contract(priceSpec.abi).at(priceSpec.address) : null;
-  const Q = require("bluebird");
-  const _ = require("underscore");
-
-  Q.promisifyAll(mistTeam);
-  Q.promisifyAll(priceOracle);
-  Q.promisifyAll(web3.eth);
-}
+Q.promisifyAll(mistTeam);
+Q.promisifyAll(priceOracle);
+Q.promisifyAll(web3.eth);
 
 class Proposal extends React.Component {
   constructor(props) {
