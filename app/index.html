@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <script src="react.js"></script>
+    <script src="react-dom.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/dapp-styles.css">
+      <link rel="icon" href="imgs/icon.png" type="image/x-icon"/>
+      <link rel="shortcut icon" href="imgs/icon.png" type="image/x-icon"/>
+
+    <meta charset="UTF-8">
+    <meta name="ethereum-dapp-url-bar-style" content="transparent">
+
+    <style>
+      .dapp-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+      }
+
+      .dapp-header, .dapp-footer, .dapp-aside, header { 
+          background: none;
+      }
+      
+      header.dapp-header {
+          padding-top: 80px;
+      }
+
+      header h1 {
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 280%;
+          text-align: center; 
+          color: #625c5c;   
+      }
+
+      .dapp-aside a {
+          font-weight: bold;
+          font-size: 120%;
+          text-transform: uppercase;
+          padding-bottom: 20px;    
+      }
+
+      .proposal {
+          background: #FFF;
+          padding: 1px 20px 25px;
+          box-shadow: rgba(0, 0, 0, 0.08) 0 1px 5px;
+          border-radius: 2px; 
+          margin-bottom: 20px;       
+      }
+
+      .proposal h1  {
+          margin-bottom: 0;
+      }
+
+      .proposal h1 strong {
+          float: right;
+      }
+
+      .dapp-aside ul {
+          list-style: none;
+          padding: 0;
+      }
+
+      button {
+          color: #3ca7f0;
+          padding: 5px 0;
+          text-transform: uppercase;
+          font-weight: 600;
+      }
+
+      button:disabled {
+          color: #625c5c;
+      }
+
+      button.dapp-block-button.approve {
+          /*background: #3ca7f0;
+          border-bottom-color: #278acd;*/
+          background: #6eb769;
+          border-bottom-color: #549e4e;
+          margin-right: 10px;
+      }
+
+      button.dapp-block-button.reject {
+          background: #de283f;
+          border-bottom-color: #a01325;
+      }
+
+      .icon {
+          width: 64px;
+          height: 64px;
+          background-size: cover;
+          background-repeat: no-repeat;
+          border-radius: 50%;
+          box-shadow: inset rgba(255, 255, 255, 0.6) 0 2px 2px, inset rgba(0, 0, 0, 0.3) 0 -2px 6px;
+      }
+
+      .icon-refresh {
+          position: relative;
+          top: 2px;
+          left: 5px;
+      }
+
+      .simple-icon {
+          text-align: center;
+          margin: 15px;
+          font-size: 180%;
+          opacity: 0.5;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="main"></div>
+    <script src="index.min.js"></script>
+  </body>
+</html>

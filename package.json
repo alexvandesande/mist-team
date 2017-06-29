@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t reactify -d index.js > index.min.js"
+    "build": "browserify -t reactify -d src/index.js > app/index.min.js",
+    "minify": "ccjs app/index.min.js > app/index.min.js_; mv app/index.min.js_ app/index.min.js"
   },
   "author": "",
   "license": "ISC",
